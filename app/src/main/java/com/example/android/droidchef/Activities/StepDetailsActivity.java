@@ -11,8 +11,9 @@ import android.widget.Button;
 import com.example.android.droidchef.CustomObjects.Recipe;
 import com.example.android.droidchef.CustomObjects.Step;
 import com.example.android.droidchef.Fragments.ExoPlayerFragment;
-import com.example.android.droidchef.R;
+import com.example.android.droidchef.Fragments.RecipeDetailsFragment;
 import com.example.android.droidchef.Fragments.StepDescriptionFragment;
+import com.example.android.droidchef.R;
 
 import java.util.ArrayList;
 
@@ -50,9 +51,10 @@ public class StepDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_step_details);
         ButterKnife.bind(this);
 
-        if(savedInstanceState != null){
+        // If there is a saved instance state, retrieve the information from it
+        if (savedInstanceState != null) {
             mStepDescriptionFragment = (StepDescriptionFragment) getSupportFragmentManager().getFragment(savedInstanceState, MY_FRAGMENT_DESCRIPTION);
-            mExoPlayerFragment =(ExoPlayerFragment) getSupportFragmentManager().getFragment(savedInstanceState, MY_FRAGMENT_PLAYER);
+            mExoPlayerFragment = (ExoPlayerFragment) getSupportFragmentManager().getFragment(savedInstanceState, MY_FRAGMENT_PLAYER);
             mCurrentStep = savedInstanceState.getParcelable(STEP_BUNDLE);
             mVideoString = savedInstanceState.getString(VIDEO_BUNDLE);
             mDescriptionString = savedInstanceState.getString(DESCRIPTION_BUNDLE);
@@ -64,19 +66,20 @@ public class StepDetailsActivity extends AppCompatActivity {
             getSupportActionBar().hide();
 
         } else {
-
+            // Get the information of the current recipe
             mCurrentRecipe = getIntent().getParcelableExtra(MainActivity.RECIPE_PARCEL);
-
+            // Get the steps of the clicked recipe
             mSteps = mCurrentRecipe.getRecipeSteps();
 
-            if (getIntent().hasExtra(RecipeDetailsActivity.STEP_PARCEL) && savedInstanceState == null) {
-
-                mCurrentStep = getIntent().getParcelableExtra(RecipeDetailsActivity.STEP_PARCEL);
-
+            // If the user clicked on a step and there is no saved instance for this activity
+            if (getIntent().hasExtra(RecipeDetailsFragment.STEP_PARCEL) && savedInstanceState == null) {
+                // Get the selected step information
+                mCurrentStep = getIntent().getParcelableExtra(RecipeDetailsFragment.STEP_PARCEL);
             }
         }
 
-        if(mCurrentStep != null) loadStepInfo(mCurrentStep);
+        // Load the current step information
+        if (mCurrentStep != null) loadStepInfo(mCurrentStep);
 
         // Set the behaviour of the Previous button ------------------------------
         mPreviousButton.setOnClickListener(new View.OnClickListener() {
@@ -98,12 +101,14 @@ public class StepDetailsActivity extends AppCompatActivity {
     private void loadPreviousStep() {
         // This is also the current position in the mSteps list
         int currentStepID = mCurrentStep.getStepID();
-        if (currentStepID != 0) {
-            Step newStep = mSteps.get(currentStepID - 1);
 
+        // If the previous step is within the mSteps bounds
+        if (currentStepID != 0) {
+            // Get the previous step
+            Step newStep = mSteps.get(currentStepID - 1);
             // Update the current step
             mCurrentStep = newStep;
-            // Load the new step
+            // Load the new step information
             loadStepInfo(newStep);
         }
     }
@@ -123,15 +128,6 @@ public class StepDetailsActivity extends AppCompatActivity {
         }
     }
 
-    //TODO: make global variables for videoString and description
-    // in load step info, compare the global variables with the local ones
-    // if they are different, it means that the user clicked next / previous
-    //              => create new fragments and replace old ones
-    // if they are the same
-    //              => keep old fragments
-    // if the global variables are null / empty
-    //              => the user is here for the first time / create brand new fragments
-
     private void loadStepInfo(Step currentStep) {
         String videoString = currentStep.getStepVideoURLString();
         String thumbnailString = currentStep.getStepThumbnailURLString();
@@ -148,7 +144,8 @@ public class StepDetailsActivity extends AppCompatActivity {
 
         FragmentManager fm = getSupportFragmentManager();
 
-        if(mVideoString == null && mDescriptionString == null){
+        // If mVideoString or mDescriptionString are null, it means the user just selected a recipe step
+        if (mVideoString == null && mDescriptionString == null) {
             mExoPlayerFragment = new ExoPlayerFragment();
             mStepDescriptionFragment = new StepDescriptionFragment();
 
@@ -162,17 +159,21 @@ public class StepDetailsActivity extends AppCompatActivity {
 
             mVideoString = mediaUri.toString();
             mDescriptionString = description;
-        } else if(mVideoString.equals(mediaUri.toString()) && mDescriptionString.equals(description)){
-            // The user recreated the activity (by rotating the screen), but is at the same step
+        }
+        // If mVideoString is the same as mediaUri.toString() and mDescription equals the local
+        // corresponding variable, the user recreated the activity (by rotating the screen),
+        // but is at the same step
+        else if (mVideoString.equals(mediaUri.toString()) && mDescriptionString.equals(description)) {
 
+            // Make sure to show the description of the step when rotating back to portrait mode
             mStepDescriptionFragment.setStepDescription(mDescriptionString);
             fm.beginTransaction()
                     .replace(R.id.container_step_description, mStepDescriptionFragment)
                     .commit();
 
-        } else if((!mVideoString.equals(mediaUri.toString()) || !mDescriptionString.equals(description))
-                && (mVideoString != null && mDescriptionString != null)){
-            // The user clicked on next / previous.
+        } else if ((!mVideoString.equals(mediaUri.toString()) || !mDescriptionString.equals(description))
+                && (mVideoString != null && mDescriptionString != null)) {
+            // This means the user clicked on next / previous.
             // Create new fragments with updated information and replace them.
             ExoPlayerFragment newPlayerFragment = new ExoPlayerFragment();
             StepDescriptionFragment newDescriptionFragment = new StepDescriptionFragment();
@@ -185,6 +186,7 @@ public class StepDetailsActivity extends AppCompatActivity {
                     .replace(R.id.container_step_description, newDescriptionFragment)
                     .commit();
 
+            // Update the global variables
             mVideoString = mediaUri.toString();
             mDescriptionString = description;
             mExoPlayerFragment = newPlayerFragment;
@@ -200,7 +202,7 @@ public class StepDetailsActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState){
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         getSupportFragmentManager().putFragment(outState, MY_FRAGMENT_PLAYER, mExoPlayerFragment);
         getSupportFragmentManager().putFragment(outState, MY_FRAGMENT_DESCRIPTION, mStepDescriptionFragment);

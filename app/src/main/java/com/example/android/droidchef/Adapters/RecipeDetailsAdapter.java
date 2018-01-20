@@ -1,11 +1,15 @@
 package com.example.android.droidchef.Adapters;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.android.droidchef.Activities.RecipeDetailsActivity;
+import com.example.android.droidchef.Activities.StepDetailsActivity;
 import com.example.android.droidchef.CustomObjects.Ingredient;
 import com.example.android.droidchef.CustomObjects.Recipe;
 import com.example.android.droidchef.CustomObjects.Step;
@@ -21,15 +25,14 @@ public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecipeDetailsAdap
 
     private Recipe mRecipeData;
 
-    private final RecipeDetailsAdapterOnClickHandler mClickHandler;
+    private static final String PARCELABLE_STEP = "step";
 
-    public RecipeDetailsAdapter(RecipeDetailsAdapterOnClickHandler handler){
-        mClickHandler = handler;
+
+
+    public RecipeDetailsAdapter(Recipe data){
+        mRecipeData = data;
     }
 
-    public interface RecipeDetailsAdapterOnClickHandler{
-        void onClick(Step recipeStep);
-    }
 
     @Override
     public RecipeDetailsAdapter.RecipeDetailsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -54,10 +57,6 @@ public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecipeDetailsAdap
         return mRecipeData.getRecipeSteps().size() + 1;
     }
 
-    public void setRecipeDetailsData(Recipe data){
-        mRecipeData = data;
-        notifyDataSetChanged();
-    }
 
     public class RecipeDetailsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
@@ -74,9 +73,19 @@ public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecipeDetailsAdap
 
         @Override
         public void onClick(View view) {
+
+            // Launch selected step details activity
             try {
                 Step step = mRecipeData.getRecipeSteps().get(getAdapterPosition() - 1);
-                mClickHandler.onClick(step);
+
+                if(RecipeDetailsActivity.isTwoPane) {
+                    Intent intent = new Intent(view.getContext(), StepDetailsActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(PARCELABLE_STEP, step);
+                    if(intent.resolveActivity(view.getContext().getPackageManager()) != null){
+                        view.getContext().startActivity(intent);
+                    }
+                }
             } catch(ArrayIndexOutOfBoundsException e){
                 return;
             }
