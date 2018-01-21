@@ -1,15 +1,11 @@
 package com.example.android.droidchef.Adapters;
 
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.android.droidchef.Activities.RecipeDetailsActivity;
-import com.example.android.droidchef.Activities.StepDetailsActivity;
 import com.example.android.droidchef.CustomObjects.Ingredient;
 import com.example.android.droidchef.CustomObjects.Recipe;
 import com.example.android.droidchef.CustomObjects.Step;
@@ -27,10 +23,15 @@ public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecipeDetailsAdap
 
     private static final String PARCELABLE_STEP = "step";
 
+    private final RecipeDetailsClickHandler mClickHandler;
 
+    public interface RecipeDetailsClickHandler {
+        void onClick(Step step);
+    }
 
-    public RecipeDetailsAdapter(Recipe data){
+    public RecipeDetailsAdapter(Recipe data, RecipeDetailsClickHandler handler){
         mRecipeData = data;
+        mClickHandler = handler;
     }
 
 
@@ -48,6 +49,7 @@ public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecipeDetailsAdap
         } else {
             holder.mRecipeDetailTextView.setText(mRecipeData.getRecipeSteps().get(position - 1).getStepShortDescription());
         }
+
 
 
     }
@@ -69,27 +71,16 @@ public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecipeDetailsAdap
             if(getAdapterPosition() != 0){
                 itemView.setOnClickListener(this);
             }
+
+
         }
 
         @Override
         public void onClick(View view) {
-
-            // Launch selected step details activity
-            try {
-                Step step = mRecipeData.getRecipeSteps().get(getAdapterPosition() - 1);
-
-                if(RecipeDetailsActivity.isTwoPane) {
-                    Intent intent = new Intent(view.getContext(), StepDetailsActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable(PARCELABLE_STEP, step);
-                    if(intent.resolveActivity(view.getContext().getPackageManager()) != null){
-                        view.getContext().startActivity(intent);
-                    }
-                }
-            } catch(ArrayIndexOutOfBoundsException e){
-                return;
-            }
+            Step step = mRecipeData.getRecipeSteps().get(getAdapterPosition() - 1);
+            mClickHandler.onClick(step);
         }
+
     }
 
     /**
@@ -110,4 +101,5 @@ public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecipeDetailsAdap
 
         return builder.toString();
     }
+
 }

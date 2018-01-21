@@ -10,13 +10,10 @@ import com.example.android.droidchef.R;
 
 import butterknife.ButterKnife;
 
-public class RecipeDetailsActivity extends AppCompatActivity {
-
+public class RecipeDetailsActivity extends AppCompatActivity{
 
     public static boolean isTwoPane;
     private Recipe mCurrentRecipe;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +24,8 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mCurrentRecipe = getIntent().getParcelableExtra(MainActivity.RECIPE_PARCEL);
+
+
 
         Bundle bundle = new Bundle();
         bundle.putParcelable(MainActivity.RECIPE_PARCEL, mCurrentRecipe);
@@ -43,25 +42,19 @@ public class RecipeDetailsActivity extends AppCompatActivity {
 
         // If this layout exists, it means we deal with a tablet user
         if(findViewById(R.id.tablet_step_details_layout) != null){
+            // Handle the tablet layout here
+            // Create a new instance of the exo player and description fragments
             isTwoPane = true;
+
+
+
         } else {
+            // Handle the phone layout here
+            // Set an onClickListener to the views that represent a step
+            // When clicked, create a new activity that launches that step's details
             isTwoPane = false;
         }
 
     }
 
-
-//
-//    @Override
-//    public void onClick(Step recipeStep) {
-//        // If it is two pane layout, update fragment information
-//
-//        //If it is not two pane layout, launch a new activity
-//        Intent intent = new Intent(RecipeDetailsActivity.this, StepDetailsActivity.class);
-//        intent.putExtra(STEP_PARCEL, recipeStep);
-//        intent.putExtra(MainActivity.RECIPE_PARCEL, mSelectedRecipe);
-//        if(intent.resolveActivity(getPackageManager()) != null){
-//            startActivity(intent);
-//        }
-//    }
 }
