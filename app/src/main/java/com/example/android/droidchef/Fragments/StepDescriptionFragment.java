@@ -18,6 +18,7 @@ import com.example.android.droidchef.R;
 public class StepDescriptionFragment extends Fragment {
 
     private String mDescription;
+    private static final String DESCRIPTION_STATE = "descriptionState";
 
     private TextView mStepDescriptionTextView;
 
@@ -30,6 +31,10 @@ public class StepDescriptionFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_step_description, container, false);
 
+        if(savedInstanceState != null){
+            mDescription = savedInstanceState.getString(DESCRIPTION_STATE);
+        }
+
         mStepDescriptionTextView = rootView.findViewById(R.id.fragment_step_description);
         mStepDescriptionTextView.setText(mDescription);
 
@@ -38,5 +43,11 @@ public class StepDescriptionFragment extends Fragment {
 
     public void setStepDescription(String description){
         mDescription = description;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        outState.putString(DESCRIPTION_STATE, mDescription);
     }
 }

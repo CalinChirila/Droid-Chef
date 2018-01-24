@@ -1,16 +1,19 @@
 package com.example.android.droidchef.Activities;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
 import com.example.android.droidchef.CustomObjects.Recipe;
 import com.example.android.droidchef.CustomObjects.Step;
 import com.example.android.droidchef.Fragments.ExoPlayerFragment;
+import com.example.android.droidchef.Fragments.ImageFragment;
 import com.example.android.droidchef.Fragments.RecipeDetailsFragment;
 import com.example.android.droidchef.Fragments.StepDescriptionFragment;
 import com.example.android.droidchef.R;
@@ -50,6 +53,8 @@ public class StepDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step_details);
         ButterKnife.bind(this);
+
+
 
         // If there is a saved instance state, retrieve the information from it
         if (savedInstanceState != null) {
@@ -195,8 +200,10 @@ public class StepDetailsActivity extends AppCompatActivity {
 
         // If there is no video or thumbnail information in the json response, hide the ExoPlayer fragment
         if (TextUtils.isEmpty(videoString) && !thumbnailString.contains(".mp4")) {
+            ImageFragment imageFragment = new ImageFragment();
+
             fm.beginTransaction()
-                    .hide(mExoPlayerFragment)
+                    .replace(R.id.container_exo_player, imageFragment)
                     .commit();
         }
     }
@@ -209,6 +216,20 @@ public class StepDetailsActivity extends AppCompatActivity {
         outState.putString(VIDEO_BUNDLE, mVideoString);
         outState.putString(DESCRIPTION_BUNDLE, mDescriptionString);
         outState.putParcelable(STEP_BUNDLE, mCurrentStep);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem){
+        switch(menuItem.getItemId()){
+            case android.R.id.home:
+                Intent intent = new Intent(StepDetailsActivity.this, RecipeDetailsActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(MainActivity.RECIPE_PARCEL, mCurrentRecipe);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                return true;
+        }
+        return super.onOptionsItemSelected(menuItem);
     }
 
 }

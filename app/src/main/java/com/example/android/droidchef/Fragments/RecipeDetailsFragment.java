@@ -31,6 +31,7 @@ public class RecipeDetailsFragment extends Fragment implements RecipeDetailsAdap
 
 
     public static final String STEP_PARCEL = "stepParcel";
+    public static final String DESCRIPTION_STATE = "descriptionState";
 
     private LinearLayoutManager mLayoutManager;
     private Recipe mRecipeData;
@@ -130,6 +131,7 @@ public class RecipeDetailsFragment extends Fragment implements RecipeDetailsAdap
                     .commit();
 
         } else {
+            // Create fragments with updated information and replace old ones
             ExoPlayerFragment newPlayerFragment = new ExoPlayerFragment();
             StepDescriptionFragment newDescriptionFragment = new StepDescriptionFragment();
 
@@ -149,7 +151,11 @@ public class RecipeDetailsFragment extends Fragment implements RecipeDetailsAdap
         mDescriptionString = descriptionString;
 
         if(mVideoString == null || TextUtils.isEmpty(mVideoString)){
-            fm.beginTransaction().hide(mPlayerFragment).commit();
+            ImageFragment imageFragment = new ImageFragment();
+            imageFragment.setImageThumbnail(thumbnailString);
+            fm.beginTransaction()
+                    .replace(R.id.container_exo_player, imageFragment)
+                    .commit();
         }
     }
 

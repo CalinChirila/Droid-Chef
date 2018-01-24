@@ -18,8 +18,30 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.RecipeDetailsActivity" />
-        <activity android:name=".Activities.StepDetailsActivity" />
+        <activity android:name=".Activities.RecipeDetailsActivity"
+            android:label="Recipe Details"
+            android:parentActivityName=".Activities.MainActivity"/>
+        <activity android:name=".Activities.StepDetailsActivity"
+            android:label="Step Details"
+            android:parentActivityName=".Activities.RecipeDetailsActivity"/>
+
+        <provider
+            android:authorities="com.example.android.droidchef.Widget.WidgetData"
+            android:name=".Widget.WidgetData.RecipeContentProvider"/>
+
+        <receiver android:name=".Widget.RecipeWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/recipe_widget_info" />
+        </receiver>
+
+        <service android:name=".Widget.WidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+        <service android:name=".Widget.RecipeNumberService" />
     </application>
 
 </manifest>

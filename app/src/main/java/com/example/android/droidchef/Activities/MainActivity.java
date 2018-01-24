@@ -2,19 +2,23 @@ package com.example.android.droidchef.Activities;
 
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import com.example.android.droidchef.Adapters.RecipeAdapter;
+import com.example.android.droidchef.CustomObjects.Ingredient;
 import com.example.android.droidchef.CustomObjects.Recipe;
 import com.example.android.droidchef.R;
-import com.example.android.droidchef.Adapters.RecipeAdapter;
 import com.example.android.droidchef.Utils.JSONUtils;
 import com.example.android.droidchef.Utils.NetworkUtils;
+import com.example.android.droidchef.Widget.WidgetData.RecipeWidgetContract;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -88,10 +92,40 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
     @Override
     public void onLoadFinished(Loader<ArrayList<Recipe>> loader, ArrayList<Recipe> recipes) {
         mRecipeAdapter.setRecipeData(recipes);
+        loadRecipesIntoWidgetDatabase(recipes);
     }
 
     @Override
     public void onLoaderReset(Loader<ArrayList<Recipe>> loader) {
         mRecipeAdapter.setRecipeData(null);
+    }
+
+    private void loadRecipesIntoWidgetDatabase(ArrayList<Recipe> recipes){
+        // We need 2 String to put into ContentValues, 1 for current recipe name and 1 for the list of ingredients
+        Cursor cursor = getContentResolver().query(RecipeWidgetContract.RecipeEntry.CONTENT_URI, null, null, null, null);
+        if(cursor.getCount() != 0){
+            cursor.close();
+            return;
+        }
+
+        for(Recipe currentRecipe : recipes){
+            String recipeName = currentRecipe.getRecipeName();
+
+            StringBuilder ingredientsStringBuilder = new StringBuilder();
+            ArrayList<Ingredient> currentIngredients = currentRecipe.getRecipeIngredients();
+
+            for(Ingredient ingredient : currentIngredients){
+                String ingredientName = ingredient.getIngredientName();
+                ingredientsStringBuilder.append(ingredientName + "\n");
+            }
+
+            String ingredientsList = ingredientsStringBuilder.toString();
+
+            ContentValues values = new ContentValues();
+            values.put(RecipeWidgetContract.RecipeEntry.COLUMN_RECIPE_NAME, recipeName);
+            values.put(RecipeWidgetContract.RecipeEntry.COLUMN_INGREDIENTS, ingredientsList);
+
+            getContentResolver().insert(RecipeWidgetContract.RecipeEntry.CONTENT_URI, values);
+        }
     }
 }
