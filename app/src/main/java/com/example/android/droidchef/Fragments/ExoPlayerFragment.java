@@ -34,10 +34,8 @@ public class ExoPlayerFragment extends Fragment {
     private Uri mMediaUri;
     private long mLastPosition = 0;
 
-
     public static final String LAST_POSITION_KEY = "lastPosition";
     public static final String LAST_MEDIA_URI = "mediaUri";
-
 
     // Mandatory empty constructor
     public ExoPlayerFragment() {
@@ -78,7 +76,6 @@ public class ExoPlayerFragment extends Fragment {
         mExoPlayerView.setPlayer(mExoPlayer);
         mExoPlayer.prepare(mediaSource, false, false);
         mExoPlayer.seekTo(mLastPosition);
-
 
     }
 

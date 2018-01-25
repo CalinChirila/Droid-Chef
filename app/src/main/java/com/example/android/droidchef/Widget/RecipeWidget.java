@@ -21,7 +21,6 @@ public class RecipeWidget extends AppWidgetProvider {
     private static RemoteViews views;
 
     public static final String EXTRA_INGREDIENTS_STRING = "ingredientsString";
-    public static final String EXTRA_INGREDIENTS_LIST_SIZE = "ingredientsSize";
     public static final String EXTRA_NUMBER_OF_RECIPES = "numberOfRecipes";
 
     public static final String ACTION_NEXT_RECIPE = "com.example.android.droidchef.nextRecipe";
@@ -30,9 +29,7 @@ public class RecipeWidget extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
-        // Set the buttons click listeners here
-        // Construct the RemoteViews object
-        // This is the entire widget layout. Set the recipe name here
+
         views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget);
 
         recipeNumber = RecipeNumberService.getCurrentRecipeNumber();
@@ -50,7 +47,6 @@ public class RecipeWidget extends AppWidgetProvider {
             String recipeName = mCursor.getString(mCursor.getColumnIndex(RecipeWidgetContract.RecipeEntry.COLUMN_RECIPE_NAME));
             String ingredientsListString = mCursor.getString(mCursor.getColumnIndex(RecipeWidgetContract.RecipeEntry.COLUMN_INGREDIENTS));
 
-
             views.setTextViewText(R.id.tv_widget_recipe_name, recipeName);
 
             // The first intent
@@ -58,16 +54,11 @@ public class RecipeWidget extends AppWidgetProvider {
             intent.putExtra(EXTRA_INGREDIENTS_STRING, ingredientsListString);
             views.setRemoteAdapter(R.id.widget_ingredients_list, intent);
 
-
-
-
-
             // Set the intent for the next recipe
             Intent nextRecipeIntent = new Intent(context, RecipeNumberService.class);
             // In this intent, put the action and the size of the ingredientsList
             nextRecipeIntent.setAction(ACTION_NEXT_RECIPE);
             nextRecipeIntent.putExtra(EXTRA_NUMBER_OF_RECIPES, numberOfRecipes);
-
 
 
             PendingIntent nextRecipePendingIntent = PendingIntent.getService(context, 0, nextRecipeIntent, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -82,11 +73,9 @@ public class RecipeWidget extends AppWidgetProvider {
             views.setOnClickPendingIntent(R.id.widget_previous_recipe_button, previousRecipePendingIntent);
 
             // Instruct the widget manager to update the widget
-
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }
     }
-
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {

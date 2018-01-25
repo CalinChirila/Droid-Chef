@@ -38,7 +38,6 @@ public class RecipeNumberService extends IntentService {
             mRecipeNumber--;
         }
 
-
         Intent updateWidgetIntent = new Intent(this, RecipeWidget.class);
         updateWidgetIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 

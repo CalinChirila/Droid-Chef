@@ -40,21 +40,17 @@ public class StepDetailsActivity extends AppCompatActivity {
     private String mVideoString;
     private String mDescriptionString;
 
-
     public static final String STEP_BUNDLE = "step";
     public static final String MY_FRAGMENT_PLAYER = "fragmentPlayer";
     public static final String MY_FRAGMENT_DESCRIPTION = "fragmentDescription";
     public static final String VIDEO_BUNDLE = "videoBundle";
     public static final String DESCRIPTION_BUNDLE = "descriptionBundle";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step_details);
         ButterKnife.bind(this);
-
-
 
         // If there is a saved instance state, retrieve the information from it
         if (savedInstanceState != null) {
@@ -231,5 +227,4 @@ public class StepDetailsActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(menuItem);
     }
-
 }

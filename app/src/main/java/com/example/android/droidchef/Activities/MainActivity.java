@@ -1,5 +1,6 @@
 package com.example.android.droidchef.Activities;
 
+
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
 import android.content.ContentValues;
@@ -7,6 +8,9 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +20,7 @@ import com.example.android.droidchef.Adapters.RecipeAdapter;
 import com.example.android.droidchef.CustomObjects.Ingredient;
 import com.example.android.droidchef.CustomObjects.Recipe;
 import com.example.android.droidchef.R;
+import com.example.android.droidchef.SimpleIdlingResource;
 import com.example.android.droidchef.Utils.JSONUtils;
 import com.example.android.droidchef.Utils.NetworkUtils;
 import com.example.android.droidchef.Widget.WidgetData.RecipeWidgetContract;
@@ -31,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
 
     private static final String TAG = MainActivity.class.getSimpleName();
     public static final String RECIPE_PARCEL = "recipeParcel";
+
+    @Nullable public static SimpleIdlingResource mIdlingResource;
 
     @BindView(R.id.rv_recipe_list)
     RecyclerView mRecipesRecyclerView;
@@ -72,6 +79,9 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
 
             @Override
             public void onStartLoading(){
+                if(mIdlingResource != null) {
+                    mIdlingResource.setIdleState(false);
+                }
                 forceLoad();
             }
 
@@ -93,6 +103,9 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
     public void onLoadFinished(Loader<ArrayList<Recipe>> loader, ArrayList<Recipe> recipes) {
         mRecipeAdapter.setRecipeData(recipes);
         loadRecipesIntoWidgetDatabase(recipes);
+        if(mIdlingResource != null) {
+            mIdlingResource.setIdleState(true);
+        }
     }
 
     @Override
@@ -127,5 +140,14 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
 
             getContentResolver().insert(RecipeWidgetContract.RecipeEntry.CONTENT_URI, values);
         }
+    }
+
+    @VisibleForTesting
+    @NonNull
+    public SimpleIdlingResource getIdlingResource(){
+        if(mIdlingResource == null){
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
     }
 }

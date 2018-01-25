@@ -21,8 +21,6 @@ public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecipeDetailsAdap
 
     private Recipe mRecipeData;
 
-    private static final String PARCELABLE_STEP = "step";
-
     private final RecipeDetailsClickHandler mClickHandler;
 
     public interface RecipeDetailsClickHandler {
@@ -49,9 +47,6 @@ public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecipeDetailsAdap
         } else {
             holder.mRecipeDetailTextView.setText(mRecipeData.getRecipeSteps().get(position - 1).getStepShortDescription());
         }
-
-
-
     }
 
     @Override
@@ -59,7 +54,6 @@ public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecipeDetailsAdap
         if(mRecipeData == null) return 0;
         return mRecipeData.getRecipeSteps().size() + 1;
     }
-
 
     public class RecipeDetailsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
@@ -72,8 +66,6 @@ public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecipeDetailsAdap
             if(getAdapterPosition() != 0){
                 itemView.setOnClickListener(this);
             }
-
-
         }
 
         @Override

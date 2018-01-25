@@ -46,11 +46,8 @@ public class RecipeDetailsActivity extends AppCompatActivity{
 
         // If this layout exists, it means we deal with a tablet user
         if(findViewById(R.id.tablet_step_details_layout) != null){
-
             isTwoPane = true;
-
         } else {
-
             isTwoPane = false;
         }
 
@@ -62,5 +59,4 @@ public class RecipeDetailsActivity extends AppCompatActivity{
         outState.putParcelable(RECIPE_SAVED_STATE, mCurrentRecipe);
 
     }
-
 }

@@ -19,7 +19,6 @@ import java.util.Arrays;
 
 public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
 
-
     private String mIngredientsListString;
     private ArrayList<String> mIngredientsList;
     private Context mContext;
@@ -27,16 +26,12 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
     private int mRecipeNumber = 0;
     private Cursor mCursor;
 
-
-
-
     public WidgetDataProvider(Context context){
         mContext = context;
 
         String[] projection = new String[]{RecipeWidgetContract.RecipeEntry._ID, RecipeWidgetContract.RecipeEntry.COLUMN_INGREDIENTS};
         String selection = RecipeWidgetContract.RecipeEntry._ID + "=?";
         String[] selectionArgs = new String[]{String.valueOf(mRecipeNumber)};
-
 
         mCursor = mContext.getContentResolver().query(RecipeWidgetContract.RecipeEntry.CONTENT_URI, projection, selection, selectionArgs, null);
         mCursor.moveToPosition(mRecipeNumber);

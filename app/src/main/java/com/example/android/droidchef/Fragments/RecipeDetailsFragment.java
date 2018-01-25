@@ -29,9 +29,7 @@ import com.example.android.droidchef.R;
 
 public class RecipeDetailsFragment extends Fragment implements RecipeDetailsAdapter.RecipeDetailsClickHandler{
 
-
     public static final String STEP_PARCEL = "stepParcel";
-    public static final String DESCRIPTION_STATE = "descriptionState";
 
     private LinearLayoutManager mLayoutManager;
     private Recipe mRecipeData;
@@ -43,7 +41,6 @@ public class RecipeDetailsFragment extends Fragment implements RecipeDetailsAdap
     private StepDescriptionFragment mDescriptionFragment;
     private String mVideoString;
     private String mDescriptionString;
-
 
     public RecipeDetailsFragment(){
     }
@@ -68,11 +65,8 @@ public class RecipeDetailsFragment extends Fragment implements RecipeDetailsAdap
         mAdapter = new RecipeDetailsAdapter(mRecipeData, this);
         mRecyclerView.setAdapter(mAdapter);
 
-
         return mRecyclerView;
     }
-
-
 
     @Override
     public void onClick(Step step) {
@@ -86,15 +80,12 @@ public class RecipeDetailsFragment extends Fragment implements RecipeDetailsAdap
         }
     }
 
-
     public void handlePhoneCase(Step step){
         Intent intent = new Intent(getActivity(), StepDetailsActivity.class);
         intent.putExtra(MainActivity.RECIPE_PARCEL, mRecipeData);
         intent.putExtra(STEP_PARCEL, step);
         startActivity(intent);
     }
-
-
 
     /**
      * Helper method that handles the case where the user is on a tablet
