@@ -134,14 +134,7 @@ public class StepDetailsActivity extends AppCompatActivity {
         String thumbnailString = currentStep.getStepThumbnailURLString();
         String description = currentStep.getStepDescription();
 
-        Uri mediaUri;
-
-        // Check to see if the videoURL isn't the thumbnailURL by mistake
-        if ((!thumbnailString.equals("") && thumbnailString.contains(".mp4")) && videoString.equals("")) {
-            mediaUri = Uri.parse(thumbnailString);
-        } else {
-            mediaUri = Uri.parse(videoString);
-        }
+        Uri mediaUri = Uri.parse(videoString);
 
         FragmentManager fm = getSupportFragmentManager();
 
@@ -151,7 +144,9 @@ public class StepDetailsActivity extends AppCompatActivity {
             mStepDescriptionFragment = new StepDescriptionFragment();
 
             mStepDescriptionFragment.setStepDescription(description);
-            mExoPlayerFragment.setMediaUri(mediaUri);
+            if(mediaUri != null) {
+                mExoPlayerFragment.setMediaUri(mediaUri);
+            }
 
             fm.beginTransaction()
                     .add(R.id.container_exo_player, mExoPlayerFragment)
@@ -195,9 +190,9 @@ public class StepDetailsActivity extends AppCompatActivity {
         }
 
         // If there is no video or thumbnail information in the json response, hide the ExoPlayer fragment
-        if (TextUtils.isEmpty(videoString) && !thumbnailString.contains(".mp4")) {
+        if (TextUtils.isEmpty(videoString)) {
             ImageFragment imageFragment = new ImageFragment();
-
+            imageFragment.setImageThumbnail(thumbnailString);
             fm.beginTransaction()
                     .replace(R.id.container_exo_player, imageFragment)
                     .commit();

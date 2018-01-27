@@ -35,7 +35,7 @@ public class ImageFragment extends Fragment {
                     .placeholder(getResources().getDrawable(R.drawable.chefhat))
                     .error(getResources().getDrawable(R.drawable.chefhat))
                     .into(imageView);
-        } else {
+        } else if(TextUtils.isEmpty(mThumbnail)){
             Picasso.with(rootView.getContext())
                     .load(R.drawable.chefhat)
                     .into(imageView);
