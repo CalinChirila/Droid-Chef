@@ -2,4 +2,7 @@
     <string name="app_name">Droid Chef</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="no_network_message">No network connection. Please connect to the internet and try again.</string>
+    <string name="no_recipes_message">There are no recipes in the list</string>
+    <string name="the_image_for_the_recipe">The image for the recipe</string>
 </resources>

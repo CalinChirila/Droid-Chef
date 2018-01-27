@@ -41,8 +41,9 @@ public class JSONUtils {
                 ingredients = getIngredientsForRecipe(ingredientsArray);
                 JSONArray stepsArray = recipeObject.optJSONArray("steps");
                 steps = getStepsForRecipe(stepsArray);
+                String recipeImage = recipeObject.optString("image");
 
-                recipes.add(new Recipe(recipeName, ingredients, steps));
+                recipes.add(new Recipe(recipeName, ingredients, steps, recipeImage));
             }
 
         } catch (JSONException e) {

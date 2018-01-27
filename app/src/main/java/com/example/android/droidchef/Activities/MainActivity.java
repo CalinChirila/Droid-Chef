@@ -4,9 +4,12 @@ package com.example.android.droidchef.Activities;
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +18,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import com.example.android.droidchef.Adapters.RecipeAdapter;
 import com.example.android.droidchef.CustomObjects.Ingredient;
@@ -41,8 +46,11 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
 
     @BindView(R.id.rv_recipe_list)
     RecyclerView mRecipesRecyclerView;
+    @BindView(R.id.tv_recipe_empty_state)
+    TextView mEmptyState;
 
     public static RecipeAdapter mRecipeAdapter;
+    private boolean isConnected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,16 +58,28 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        // Check internet connection
+        ConnectivityManager cm =(ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork;
+        if(cm != null){
+            activeNetwork = cm.getActiveNetworkInfo();
+            isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        }
 
-        mRecipeAdapter = new RecipeAdapter(this);
+        if(isConnected) {
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        mRecipesRecyclerView.setLayoutManager(layoutManager);
-        mRecipesRecyclerView.setHasFixedSize(true);
-        mRecipesRecyclerView.setAdapter(mRecipeAdapter);
+            mRecipeAdapter = new RecipeAdapter(this);
 
-        getLoaderManager().initLoader(1, null, this);
+            mRecipesRecyclerView.setLayoutManager(layoutManager);
+            mRecipesRecyclerView.setHasFixedSize(true);
+            mRecipesRecyclerView.setAdapter(mRecipeAdapter);
+
+            getLoaderManager().initLoader(1, null, this);
+        } else {
+            setEmptyStateWithText(getString(R.string.no_network_message));
+        }
     }
 
     @Override
@@ -101,10 +121,14 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Recipe>> loader, ArrayList<Recipe> recipes) {
-        mRecipeAdapter.setRecipeData(recipes);
-        loadRecipesIntoWidgetDatabase(recipes);
-        if(mIdlingResource != null) {
-            mIdlingResource.setIdleState(true);
+        if(recipes != null) {
+            mRecipeAdapter.setRecipeData(recipes);
+            loadRecipesIntoWidgetDatabase(recipes);
+            if (mIdlingResource != null) {
+                mIdlingResource.setIdleState(true);
+            }
+        } else {
+            setEmptyStateWithText(getString(R.string.no_recipes_message));
         }
     }
 
@@ -139,6 +163,18 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
             values.put(RecipeWidgetContract.RecipeEntry.COLUMN_INGREDIENTS, ingredientsList);
 
             getContentResolver().insert(RecipeWidgetContract.RecipeEntry.CONTENT_URI, values);
+        }
+    }
+
+    private void setEmptyStateWithText(String text){
+        int visibility = mEmptyState.getVisibility();
+        switch(visibility){
+            case View.GONE:
+            case View.INVISIBLE:
+                mRecipesRecyclerView.setVisibility(View.GONE);
+                mEmptyState.setVisibility(View.VISIBLE);
+                mEmptyState.setText(text);
+                break;
         }
     }
 

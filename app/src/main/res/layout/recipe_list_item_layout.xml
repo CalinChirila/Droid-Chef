@@ -11,6 +11,11 @@
     android:layout_width="match_parent"
     android:layout_height="100dp">
 
+    <ImageView
+        android:id="@+id/iv_recipe_image"
+        android:layout_width="@dimen/recipe_image_width"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/the_image_for_the_recipe"/>
 
     <TextView
         android:id="@+id/cv_recipe_name"

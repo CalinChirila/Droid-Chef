@@ -33,9 +33,13 @@ public class ExoPlayerFragment extends Fragment {
     private SimpleExoPlayer mExoPlayer;
     private Uri mMediaUri;
     private long mLastPosition = 0;
+    private boolean mPlayWhenReady;
+
 
     public static final String LAST_POSITION_KEY = "lastPosition";
     public static final String LAST_MEDIA_URI = "mediaUri";
+    public static final String KEY_PLAY_WHEN_READY = "playWhenReady";
+
 
     // Mandatory empty constructor
     public ExoPlayerFragment() {
@@ -48,6 +52,7 @@ public class ExoPlayerFragment extends Fragment {
         if(savedInstanceState != null){
             mLastPosition = savedInstanceState.getLong(LAST_POSITION_KEY);
             mMediaUri = Uri.parse(savedInstanceState.getString(LAST_MEDIA_URI));
+            mPlayWhenReady = savedInstanceState.getBoolean(KEY_PLAY_WHEN_READY);
         }
 
         // Inflate the exoplayer fragment layout
@@ -72,7 +77,8 @@ public class ExoPlayerFragment extends Fragment {
                 null,
                 null
         );
-        mExoPlayer.setPlayWhenReady(true);
+
+        mExoPlayer.setPlayWhenReady(mPlayWhenReady);
         mExoPlayerView.setPlayer(mExoPlayer);
         mExoPlayer.prepare(mediaSource, false, false);
         mExoPlayer.seekTo(mLastPosition);
@@ -124,6 +130,9 @@ public class ExoPlayerFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mLastPosition = mExoPlayer.getCurrentPosition();
+        mPlayWhenReady = mExoPlayer.getPlayWhenReady();
+
+        outState.putBoolean(KEY_PLAY_WHEN_READY, mPlayWhenReady);
         outState.putLong(LAST_POSITION_KEY, mLastPosition);
         outState.putString(LAST_MEDIA_URI, mMediaUri.toString());
     }

@@ -15,18 +15,21 @@ public class Recipe implements Parcelable {
     private String mName;
     private ArrayList<Ingredient> mIngredients;
     private ArrayList<Step> mSteps;
+    private String mRecipeImage;
 
     // The constructor
-    public Recipe(String name, ArrayList<Ingredient> ingredients, ArrayList<Step> steps){
+    public Recipe(String name, ArrayList<Ingredient> ingredients, ArrayList<Step> steps, String recipeImage){
         mName = name;
         mIngredients = ingredients;
         mSteps = steps;
+        mRecipeImage = recipeImage;
     }
 
     protected Recipe(Parcel in) {
         mName = in.readString();
         mIngredients = in.readArrayList(Ingredient.class.getClassLoader());
         mSteps = in.readArrayList(Step.class.getClassLoader());
+        mRecipeImage = in.readString();
     }
 
     public static final Creator<Recipe> CREATOR = new Creator<Recipe>() {
@@ -45,6 +48,7 @@ public class Recipe implements Parcelable {
     public String getRecipeName(){ return mName; }
     public ArrayList<Ingredient> getRecipeIngredients(){ return mIngredients; }
     public ArrayList<Step> getRecipeSteps(){ return mSteps; }
+    public String getRecipeImage(){ return mRecipeImage; }
 
     @Override
     public int describeContents() {
@@ -56,5 +60,6 @@ public class Recipe implements Parcelable {
         parcel.writeString(mName);
         parcel.writeList(mIngredients);
         parcel.writeList(mSteps);
+        parcel.writeString(mRecipeImage);
     }
 }

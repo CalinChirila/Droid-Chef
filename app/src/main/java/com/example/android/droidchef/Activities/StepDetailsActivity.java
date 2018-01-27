@@ -207,7 +207,11 @@ public class StepDetailsActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        getSupportFragmentManager().putFragment(outState, MY_FRAGMENT_PLAYER, mExoPlayerFragment);
+        try {
+            getSupportFragmentManager().putFragment(outState, MY_FRAGMENT_PLAYER, mExoPlayerFragment);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         getSupportFragmentManager().putFragment(outState, MY_FRAGMENT_DESCRIPTION, mStepDescriptionFragment);
         outState.putString(VIDEO_BUNDLE, mVideoString);
         outState.putString(DESCRIPTION_BUNDLE, mDescriptionString);
